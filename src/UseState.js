@@ -9,6 +9,8 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
         value:'',
         error:false,
         loading:false,
+        deleted: false,
+        confirmed:false,// este y deleted te preguntara si desea elimar 
     });
     const [value, setvalue]= React.useState('');// los usario escriba
     const [error, setError]= React.useState(false);
@@ -28,6 +30,7 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
                         ...state,
                         error:false,
                         loading: false,
+                        confirmed:true,
                     });
               /*  setloading(false); */
             }else{
@@ -51,45 +54,93 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
       
 
     
-     return ( 
-     <div>
-        <h2>Eliminar {name}</h2>
-        <p>Por favor escribe el codigo de seguridad</p>
-        
-        {(state.error && !state.loading ) && ( /* se le poso el loading para cuando vamos a validar el estado se quite el texto de codigo incorrecto */
-            <p>Erro: de codigo es incorreto</p>
-        )} {/* esta pregunto si erro es tru renderiseme lo que sepone  despues de &&, si cambie arriba de donde false a tru sale el texto */}
+  if (!state.deleted && !state.confirmed){
+    return ( 
+        <div>
+           <h2>Eliminar {name}</h2>
+           <p>Por favor escribe el codigo de seguridad</p>
+           
+           {(state.error && !state.loading ) && ( /* se le poso el loading para cuando vamos a validar el estado se quite el texto de codigo incorrecto */
+               <p>Erro: de codigo es incorreto</p>
+           )} {/* esta pregunto si erro es tru renderiseme lo que sepone  despues de &&, si cambie arriba de donde false a tru sale el texto */}
+       
+           {state.loading && (
+               <p>Cargando...</p>
+           )}  
+           <input 
+           placeholder="Codigo de seguridad"
+           value={state.value}
+           onChange={(event)=>{
+               setState({
+                   ...state,
+                   value: event.target.value,
+               });
+               /* setError(false); */ // este para que cambie cuando el usuario esta escribiendo el estado de error
+               /* setvalue(event.target.value); //el valor sera lo que escriba los usuario */
+           }}
+           />
+           <button
+           onClick={() => {
+           /* setError(false); */ //para que cambie el estado de carga si el codigo es correcto se quita
+           setState({
+               ...state,
+               loading: true,
+           });
+       }} 
+       > Comprobando</button>
+           
     
-        {state.loading && (
-            <p>Cargando...</p>
-        )}  
-        <input 
-        placeholder="Codigo de seguridad"
-        value={state.value}
-        onChange={(event)=>{
-            setState({
-                ...state,
-                value: event.target.value,
-            });
-            /* setError(false); */ // este para que cambie cuando el usuario esta escribiendo el estado de error
-            /* setvalue(event.target.value); //el valor sera lo que escriba los usuario */
-        }}
-        />
-        <button
-        onClick={() => {
-        /* setError(false); */ //para que cambie el estado de carga si el codigo es correcto se quita
-        setState({
-            ...state,
-            loading: true,
-        });
-    }} 
-    > Comprobando</button>
-        
- 
-    
-    </div>
-    );
- }
+       
+       </div>
+       );
+    } else if (!!state.confirmed && !state.deleted){
+        return(
+            <React.Fragment>
+                <p>pedimos confirmacion. ¿Esta seguro? </p>
+                
+                
+                <button
+                    onClick={()=>{
+                        setState({
+                            ...state,
+                            deleted:true,
+                        });
+                    }}
+                >
+                    Si, elimanar
+                    </button>
+                <button
+                onClick={()=>{
+                    setState({
+                        ...state,
+                        confirmed:false,
+                        value:'',
+                    });
+                }}
+                >
+                    No, Gracias</button>
+            </React.Fragment>
+        );
+    }else{
+        return(
+            <React.Fragment>
+            <p>Eliminaado con exito</p>
+                <button
+                onClick={()=>{
+                    setState({
+                        ...state,
+                        confirmed:false,
+                        deleted:true,
+                        value:'',
+                    });
+                }}
+                >
+                    Recuperar
+                </button>
+        </React.Fragment> 
+        )
+    }
+  }
 
 
 export default UseState;
