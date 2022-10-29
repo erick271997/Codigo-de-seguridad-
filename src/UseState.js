@@ -16,7 +16,51 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
     const [error, setError]= React.useState(false);
     const [loading, setloading]= React.useState(false); //son estado se de poner asi por convecion se lla state, setState
 
-    console.log(state);
+    const onConfirm = () =>{
+        setState({
+            ...state,
+            error:false,
+            loading: false,
+            confirmed:true,
+        });
+    };
+
+    const onError = () =>{
+        setState({
+            ...state,
+            error:true,
+            loading: false,
+        });
+    };
+
+    const onWarite = (newValue) =>{
+        setState({
+            ...state,
+            value: newValue,
+        });
+    };
+
+    const onCheck = ()=>{
+        setState({
+            ...state,
+            loading: true,
+        });
+    };
+    const onDelete = () =>{
+        setState({
+            ...state,
+            deleted:true,
+        });
+    };
+
+    const onReset= () =>{
+        setState({
+            ...state,
+            confirmed:false,
+            deleted:false,
+            value:'',
+        });
+    }
 
     React.useEffect(()=> {
         console.log("empemzando el efecto")
@@ -26,19 +70,10 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
                 console.log("Haciendo la validacion")
 
                 if (state.value === SECURITY_CODE) {
-                    setState({
-                        ...state,
-                        error:false,
-                        loading: false,
-                        confirmed:true,
-                    });
+                  onConfirm();
               /*  setloading(false); */
             }else{
-                setState({
-                    ...state,
-                    error:true,
-                    loading: false,
-                });
+                onError();
             }
             
           
@@ -67,14 +102,12 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
            {state.loading && (
                <p>Cargando...</p>
            )}  
+           
            <input 
            placeholder="Codigo de seguridad"
            value={state.value}
            onChange={(event)=>{
-               setState({
-                   ...state,
-                   value: event.target.value,
-               });
+               onWarite(event.target.value);
                /* setError(false); */ // este para que cambie cuando el usuario esta escribiendo el estado de error
                /* setvalue(event.target.value); //el valor sera lo que escriba los usuario */
            }}
@@ -82,10 +115,7 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
            <button
            onClick={() => {
            /* setError(false); */ //para que cambie el estado de carga si el codigo es correcto se quita
-           setState({
-               ...state,
-               loading: true,
-           });
+            onCheck();
        }} 
        > Comprobando</button>
            
@@ -96,28 +126,21 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
     } else if (!!state.confirmed && !state.deleted){
         return(
             <React.Fragment>
-                <p>pedimos confirmacion. ¿Esta seguro? </p>
+                <p>edimos confirmacion. ¿Esta seguro? </p>
                 
                 
                 <button
                     onClick={()=>{
-                        setState({
-                            ...state,
-                            deleted:true,
-                        });
+                       onDelete();
                     }}
-                >
+            >
                     Si, elimanar
                     </button>
                 <button
                 onClick={()=>{
-                    setState({
-                        ...state,
-                        confirmed:false,
-                        value:'',
-                    });
+                   onReset(); 
                 }}
-                >
+            >
                     No, Gracias</button>
             </React.Fragment>
         );
@@ -127,14 +150,9 @@ const SECURITY_CODE='paradigma'; //estos es para validar el cidigo se seguridad
             <p>Eliminaado con exito</p>
                 <button
                 onClick={()=>{
-                    setState({
-                        ...state,
-                        confirmed:false,
-                        deleted:true,
-                        value:'',
-                    });
+                   onReset();
                 }}
-                >
+             >
                     Recuperar
                 </button>
         </React.Fragment> 
